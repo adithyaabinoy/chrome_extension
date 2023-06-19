@@ -1,6 +1,7 @@
 (() => {
     let youtubeLeftControls, youtubePlayer;
     let currentVideo = "";
+    let currentVideoBookmarks = [];
 
     chrome.runtime.onMessage.addListener((obj, sender, response) => {
         const { type, value, videoId } = obj;
@@ -34,7 +35,11 @@
         const newBookmark = {
             time: currentTime,
             desc: "Bookmark at " + getTime(currentTime),
-        }
+        };
+
+        chrome.storage.sync.set({
+            [currentVideo]: JSON.stringify([...currentVideoBookmarks, newBookmark].sort((a,b) => a.time - b.time))
+        })
     }
 
     newVideoLoaded();
